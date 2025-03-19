@@ -239,17 +239,33 @@ static=yes
 writeprotect=no
 clearglobalvars=no
 
+[globals]
+CONSOLE=Console/dsp
+TRUNK=DAHDI/G2
+TRUNKMSD=1
+
 [from-internal]
-exten => _55XXXXXXXXXXX,1,NoOp(Chamada para ${EXTEN} via ARI) ;celular
- same => n,Stasis(my-app)   ; Chama a aplicação ARI
+; Chamadas para números iniciando com 55 (DDD brasileiro)
+exten => _55XXXXXXXXXXX,1,NoOp(Chamada para ${EXTEN} via ARI)
+ same => n,Stasis(my-app)
  same => n,Hangup()
 
-exten => _55XXXXXXXXXX,1,NoOp(Chamada para ${EXTEN} via ARI) ;fixo
- same => n,Stasis(my-app)   ; Chama a aplicação ARI
+exten => _55XXXXXXXXXX,1,NoOp(Chamada para ${EXTEN} via ARI)
+ same => n,Stasis(my-app)
  same => n,Hangup()
 
+exten => _55XXXXXXXX,1,NoOp(Chamada para ${EXTEN} via ARI)
+ same => n,Stasis(my-app)
+ same => n,Hangup()
+
+; Chamada para ramais numéricos internos
 exten => _XXX!,1,Dial(PJSIP/${EXTEN},20)
-same => n,Hangup()
+same => n,Hangup()
+
+; Chamada para ramais alfanuméricos
+exten => _[a-zA-Z0-9].,1,NoOp(Chamada para ramal alfanumérico: ${EXTEN})
+ same => n,Dial(PJSIP/${EXTEN},20)
+ same => n,Hangup()
 EOL
 
 echo =====================================================
